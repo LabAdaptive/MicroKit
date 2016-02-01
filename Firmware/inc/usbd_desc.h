@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    USB_Device/CDC_Standalone/Inc/main.h 
+  * @file    USB_Device/CDC_Standalone/Inc/usbd_desc.h
   * @author  MCD Application Team
   * @version V1.3.0
   * @date    18-December-2015
-  * @brief   Header for main.c module
+  * @brief   Header for usbd_desc.c module
   ******************************************************************************
   * @attention
   *
@@ -46,23 +46,23 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __USBD_DESC_H
+#define __USBD_DESC_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal.h"
-//#include "stm3210c_eval.h"
-#include "usbd_core.h"
-#include "usbd_desc.h"
-#include "usbd_cdc.h"
-#include "usbd_cdc_interface.h"
+#include "usbd_def.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+#define         DEVICE_ID1          (0x1FFFF7E8)
+#define         DEVICE_ID2          (0x1FFFF7EC)
+#define         DEVICE_ID3          (0x1FFFF7F0)
+
+#define  USB_SIZ_STRING_SERIAL       0x1A
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Toggle_Leds(void);
+extern USBD_DescriptorsTypeDef VCP_Desc;
 
-#endif /* __MAIN_H */
-
+#endif /* __USBD_DESC_H */
+ 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
