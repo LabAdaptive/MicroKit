@@ -75,6 +75,9 @@ LDFLAGS+= -Wl,--gc-sections
 
 all: ${OBJDIR} ${BINDIR} ${ELF} ${BIN} ${HEX} ${LIST} ${DFU}
 
+${DRIVER_LIB}/libSTM32_API.a: 
+	make -C lib/STM32Cube_FW_F1_V1.3.0/Drivers/STM32F1xx_HAL_Driver/Src/
+
 #
 # .o .c target
 #
@@ -90,7 +93,7 @@ obj/%.o: src/%.s
 #
 # .elf target
 #          
-${ELF}: ${OBJs} 
+${ELF}: ${OBJs} ${DRIVER_LIB}/libSTM32_API.a
 	$(CC) $(LDFLAGS) $(OBJs) -lSTM32_API -o $(ELF)
 #
 # .bin target
@@ -113,6 +116,7 @@ $(DFU): ${HEX}
 # clean
 #
 clean:
+	make clean -C lib/STM32Cube_FW_F1_V1.3.0/Drivers/STM32F1xx_HAL_Driver/Src/
 	rm -f obj/*
 	rm -f bin/*
 
