@@ -86,11 +86,22 @@ int main(void)
 
   /*Configure GPIO pin Output Level */
 
+  //__HAL_RCC_GPIOB_CLK_ENABLE();
+  //__HAL_RCC_GPIOC_CLK_ENABLE();
 
   uint8_t HiMsg[]="hello\r\n";
   int set = 0;
+  HAL_Delay(1000);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+  HAL_Delay(1000);
 
-  //HAL_Delay(10000);
+  GPIO_InitTypeDef GPIO_InitStruct;
+  /*Configure GPIO pin : PB2 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
   while (1)
   {
@@ -101,13 +112,27 @@ int main(void)
 	  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_13);
 	  if (set == 0){
 		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_13, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_14, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3,GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4,GPIO_PIN_SET);
 		  set = 1;
 	  }
 	  else{
 		  set =0;
 		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_13, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_14, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3,GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4,GPIO_PIN_RESET);
 	  }
-	  CDC_Transmit_FS(HiMsg,strlen(HiMsg));
+	  //CDC_Transmit_FS(HiMsg,strlen(HiMsg));
   }
   /* USER CODE END 3 */
 
@@ -153,7 +178,7 @@ void SystemClock_Config(void)
   __HAL_RCC_PLLI2S_ENABLE();
 
   /* SysTick_IRQn interrupt configuration */
-  //HAL_NVIC_SetPriority(SysTick_IRQn, 4, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
 /* USER CODE BEGIN 4 */

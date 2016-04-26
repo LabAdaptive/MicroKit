@@ -61,7 +61,11 @@ void HAL_MspInit(void)
   /* DebugMonitor_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DebugMonitor_IRQn, 3, 0);
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 4, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+
+    /**DISABLE: JTAG-DP Disabled and SW-DP Disabled 
+    */
+  __HAL_AFIO_REMAP_SWJ_DISABLE();
 
   /* USER CODE BEGIN MspInit 1 */
 
