@@ -1,5 +1,5 @@
 PROJECT 	= MicroKit
-SRCDIR   	= src
+SRCDIR   	= Src
 OBJDIR  	= obj 
 BINDIR   	= bin 
 SRCs     	= $(wildcard ${SRCDIR}/*.c)
@@ -54,7 +54,7 @@ DFUTOOL = ../../tools/dfu/dfuse-pack.py
 #
 CFLAGS  = -O0 -g -Wall -fdata-sections -ffunction-sections -I.      \
    -mcpu=cortex-m3 -mthumb \
-   -I$(DEVICE) -I$(DEVICE)/Include -I$(CORE) -Iinc -iquoteinc \
+   -I$(DEVICE) -I$(DEVICE)/Include -I$(CORE) -IInc -iquoteInc \
    -I$(PERIPH)/Inc -I$(DISCOVERY) -I$(USBCORE)/Inc -iquote$(USBCORE)/Inc -I$(USBCLASS)/Inc -iquote$(USBCLASS)/Inc \
    -DUSE_STDPERIPH_DRIVER -DSTM32F105xC
 
