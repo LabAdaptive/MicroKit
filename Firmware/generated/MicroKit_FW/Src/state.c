@@ -24,7 +24,7 @@ uint8_t InitPinList(PinList * x){
 	x->state      = 0x360c000f3579e200;
 	x->usable     = 0x37ff21ff3ff9e800;
 	x->direction  = 0x37f7210b30800600;
-    x->defaultVal = 
+    x->defaultVal = 0x0121200000000000;
 }
 
 
