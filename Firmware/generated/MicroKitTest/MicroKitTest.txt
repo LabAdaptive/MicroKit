@@ -1,0 +1,121 @@
+Configuration	MicroKitTest
+STM32CubeMX 	4.14.0
+Date	04/27/2016
+MCU	STM32F105RCTx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC1	IN0	ADC1_IN0	PA0-WKUP
+ADC1	IN2	ADC1_IN2	PA2
+ADC1	IN4	ADC1_IN4	PA4
+ADC1	IN6	ADC1_IN6	PA6
+ADC1	IN10	ADC1_IN10	PC0
+ADC1	IN15	ADC1_IN15	PC5
+ADC2	IN1	ADC2_IN1	PA1
+ADC2	IN3	ADC2_IN3	PA3
+ADC2	IN5	ADC2_IN5	PA5
+ADC2	IN7	ADC2_IN7	PA7
+ADC2	IN9	ADC2_IN9	PB1
+ADC2	IN11	ADC2_IN11	PC1
+I2C2	I2C	I2C2_SCL	PB10
+I2C2	I2C	I2C2_SDA	PB11
+RCC	Crystal/Ceramic Resonator	RCC_OSC_IN	PD0-OSC_IN
+RCC	Crystal/Ceramic Resonator	RCC_OSC_OUT	PD1-OSC_OUT
+SPI2	Full-Duplex Master	SPI2_MISO	PB14
+SPI2	Full-Duplex Master	SPI2_MOSI	PB15
+SPI2	Full-Duplex Master	SPI2_SCK	PB13
+SPI2	Hardware NSS Input Signal	SPI2_NSS	PB12
+SYS	No Debug	SYS_VS_ND	VP_SYS_VS_ND
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+TIM4	PWM Generation CH1	TIM4_CH1	PB6
+TIM4	PWM Generation CH2	TIM4_CH2	PB7
+TIM4	Output Compare CH3	TIM4_CH3	PB8
+TIM4	PWM Generation CH4	TIM4_CH4	PB9
+USART3	Asynchronous	USART3_RX	PC11
+USART3	Asynchronous	USART3_TX	PC10
+USB_OTG_FS	Device_Only	USB_OTG_FS_DM	PA11
+USB_OTG_FS	Device_Only	USB_OTG_FS_DP	PA12
+USB_OTG_FS	Activate VBUS	USB_OTG_FS_VBUS	PA9
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+2	PC13-TAMPER-RTC	GPIO_Output	EA1_S1
+3	PC14-OSC32_IN	GPIO_Output	EA1_S0
+4	PC15-OSC32_OUT	GPIO_Output	VA0_EN
+5	PD0-OSC_IN	RCC_OSC_IN	
+6	PD1-OSC_OUT	RCC_OSC_OUT	
+8	PC0	ADC1_IN10	
+9	PC1	ADC2_IN11	
+10	PC2	GPIO_Output	EA0_S1
+11	PC3	GPIO_Output	EA0_S0
+14	PA0-WKUP	ADC1_IN0	
+15	PA1	ADC2_IN1	
+16	PA2	ADC1_IN2	
+17	PA3	ADC2_IN3	
+20	PA4	ADC1_IN4	
+21	PA5	ADC2_IN5	
+22	PA6	ADC1_IN6	
+23	PA7	ADC2_IN7	
+24	PC4	GPIO_Output	VA1_EN
+25	PC5	ADC1_IN15	
+26	PB0	GPIO_Input	SW0
+27	PB1	ADC2_IN9	
+28	PB2	GPIO_Input	SW1
+29	PB10	I2C2_SCL	
+30	PB11	I2C2_SDA	
+33	PB12	SPI2_NSS	
+34	PB13	SPI2_SCK	
+35	PB14	SPI2_MISO	
+36	PB15	SPI2_MOSI	
+37	PC6	GPIO_Input	Digital0
+38	PC7	GPIO_Input	Digitial1
+39	PC8	GPIO_Input	Digital2
+40	PC9	GPIO_Input	Digital3
+41	PA8	GPIO_Output	BOOST_EN
+42	PA9	USB_OTG_FS_VBUS	
+44	PA11	USB_OTG_FS_DM	
+45	PA12	USB_OTG_FS_DP	
+46	PA13	GPIO_Output	TMS_SDIO
+49	PA14	GPIO_Output	TCK_SWCLK
+50	PA15	GPIO_Output	SCK_SS_O
+51	PC10	USART3_TX	
+52	PC11	USART3_RX	
+53	PC12	GPIO_Output	MISO_RX_O
+54	PD2	GPIO_Output	TX_MOSI_O
+55	PB3	GPIO_Output	D0_D1_O
+56	PB4	GPIO_Output	D2_D3_O
+57	PB5	GPIO_Output	BOOST_SEL
+58	PB6	TIM4_CH1	
+59	PB7	TIM4_CH2	
+61	PB8	TIM4_CH3	
+62	PB9	TIM4_CH4	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : MicroKitTest
+Project Folder : /home/jack/Sandbox/MicroKit/Firmware/generated/MicroKitTest
+Toolchain / IDE : SW4STM32
+Firmware Package Name and Version : STM32Cube FW_F1 V1.3.1
+
+
+Code Generation Settings : 
+STM32Cube Firmware Library Package : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per IP : Yes
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : Balanced Size/Speed
+
+
+
+
+
+
