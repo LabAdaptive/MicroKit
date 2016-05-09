@@ -7,6 +7,8 @@
 #include "usb_device.h"
 #include "gpio.h"
 #include "state.h"
+#include "tfp_printf.h"
+#include "usbd_cdc_if.h"
 
 void SystemClock_Config(void);
 
@@ -38,12 +40,15 @@ int main(void)
     MX_SPI2_Init(&devState);
     MX_TIM4_Init(&devState);
     MX_USART3_UART_Init(&devState);
+    init_printf(NULL,usb_putc);
     
     HAL_Delay(2000);
     while (1)
     {
-        ret = USB_ReceiveBuffer(message,&length);
-        USB_SendBuffer(message,length);
+        printf("hello\n\r");
+        HAL_Delay(500);
+        //ret = USB_ReceiveBuffer(message,&length);
+        //USB_SendBuffer(message,length);
     }
 
 }

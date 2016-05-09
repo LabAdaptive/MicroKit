@@ -107,6 +107,7 @@ extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
 uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 uint8_t USB_RecieveBuffer(uint8_t* usr_buf, uint8_t *Len);
 uint8_t USB_SendBuffer(uint8_t * buf, uint16_t len);
+void usb_putc (void* p, char c);
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
 /* USER CODE END EXPORTED_FUNCTIONS */
 /**

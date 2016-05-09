@@ -46,6 +46,7 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length);
 static int8_t CDC_Receive_FS  (uint8_t* pbuf, uint32_t *Len);
 
 uint8_t ReceiveBuffer[1024];
+uint8_t TxBuffer[64];
 uint8_t data_received = 0;
 uint16_t read_len = 0;
 
@@ -218,13 +219,17 @@ uint8_t USB_ReceiveBuffer(uint8_t* usr_buf, uint8_t *Len){
 uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 {
   uint8_t result = USBD_OK;
+  int i =0;
   /* USER CODE BEGIN 7 */ 
   USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDevice_0->pClassData;
-  if (hcdc->TxState != 0){
-    return USBD_BUSY;
+  for(i=0;i<Len;i++){    
+    TxBuffer[i] = Buf[i];
   }
-  USBD_CDC_SetTxBuffer(hUsbDevice_0, Buf, Len);
+  while (hcdc->TxState != 0);
+  USBD_CDC_SetTxBuffer(hUsbDevice_0, TxBuffer, Len);
   result = USBD_CDC_TransmitPacket(hUsbDevice_0);
+
+  while (hcdc->TxState != 0);    
   /* USER CODE END 7 */ 
   return result;
 }
@@ -235,6 +240,10 @@ uint8_t USB_SendBuffer(uint8_t * buf, uint16_t len){
         CDC_Transmit_FS(buf,len);
     }
     return 0;
+}
+
+void usb_putc (void* p, char c){
+    USB_SendBuffer((uint8_t*)&c,1);
 }
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
