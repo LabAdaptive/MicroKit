@@ -42,39 +42,20 @@
 TIM_HandleTypeDef htim4;
 
 /* TIM4 init function */
-void MX_TIM4_Init(void)
+void MX_TIM4_Init(DeviceConfig *x)
 {
-  TIM_MasterConfigTypeDef sMasterConfig;
-  TIM_OC_InitTypeDef sConfigOC;
 
-  htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 0;
-  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 0;
-  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  HAL_TIM_PWM_Init(&htim4);
+  HAL_TIM_PWM_Init(&(x->htim4));
+  HAL_TIM_OC_Init(&(x->htim4));
 
-  HAL_TIM_OC_Init(&htim4);
+  HAL_TIMEx_MasterConfigSynchronization(&(x->htim4),&(x->sTIMMasterConfig));
 
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig);
+  HAL_TIM_PWM_ConfigChannel(&(x->htim4), &(x->TIMConfigOC1), TIM_CHANNEL_1);
+  HAL_TIM_PWM_ConfigChannel(&(x->htim4), &(x->TIMConfigOC2), TIM_CHANNEL_2);
+  HAL_TIM_PWM_ConfigChannel(&(x->htim4), &(x->TIMConfigOC3), TIM_CHANNEL_3);
+  HAL_TIM_PWM_ConfigChannel(&(x->htim4), &(x->TIMConfigOC4), TIM_CHANNEL_4);
 
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1);
-
-  HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_2);
-
-  sConfigOC.OCMode = TIM_OCMODE_TIMING;
-  HAL_TIM_OC_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_3);
-
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_4);
-
-  HAL_TIM_MspPostInit(&htim4);
+  HAL_TIM_MspPostInit(&(x->htim4));
 
 }
 

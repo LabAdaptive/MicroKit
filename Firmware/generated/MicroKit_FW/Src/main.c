@@ -12,33 +12,39 @@ void SystemClock_Config(void);
 
 int main(void)
 {
-  // init HAL 
-  HAL_Init();
 
-  /* Configure the system clock */
-  SystemClock_Config();
+    uint8_t message[1024];
+    uint8_t message2[10] = "hello\n\r";
+	uint8_t recieved_byte = 0;
+	uint8_t recieved_old = 0;
+    uint32_t length = 0;
+    uint8_t ret = 0;
+    // init HAL 
+    HAL_Init();
+   
+    /* Configure the system clock */
+    SystemClock_Config();
 
-  /* Initialize all configured peripherals */ 
-  uint64_t gpioState = 0x0000000000000000;
-  
-  /* init pin state holder*/
-  //InitPinStates(&gpioState);
+    /* Initialize all configured peripherals */ 
+    DeviceConfig devState;
+    InitDeviceConfig(&devState);  
+   
+    MX_USB_DEVICE_Init();
 
-  MX_GPIO_Init();
-  MX_USB_DEVICE_Init();
-  MX_I2C2_Init();
-  MX_ADC1_Init();
-  MX_ADC2_Init();
-  MX_SPI2_Init();
-  MX_TIM4_Init();
-  MX_USART3_UART_Init();
-
-  HAL_Delay(1000);
-  while (1)
-  {
-
-
-  }
+    MX_GPIO_Init();
+    MX_I2C2_Init(&devState);
+    MX_ADC1_Init(&devState);
+    MX_ADC1_Init(&devState);
+    MX_SPI2_Init(&devState);
+    MX_TIM4_Init(&devState);
+    MX_USART3_UART_Init(&devState);
+    
+    HAL_Delay(2000);
+    while (1)
+    {
+        ret = USB_ReceiveBuffer(message,&length);
+        USB_SendBuffer(message,length);
+    }
 
 }
 

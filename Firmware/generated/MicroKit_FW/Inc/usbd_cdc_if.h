@@ -55,6 +55,8 @@
   * @{
   */ 
 /* USER CODE BEGIN EXPORTED_DEFINES */
+
+
 /* USER CODE END EXPORTED_DEFINES */
 
 /**
@@ -81,6 +83,12 @@
   * @}
   */ 
 
+typedef struct {
+	uint8_t status;
+    uint8_t len;
+	uint8_t data[64]; 
+}BufferList;
+
 /** @defgroup USBD_AUDIO_IF_Exported_Variables
   * @{
   */ 
@@ -97,7 +105,8 @@ extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
   * @{
   */ 
 uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
-
+uint8_t USB_RecieveBuffer(uint8_t* usr_buf, uint8_t *Len);
+uint8_t USB_SendBuffer(uint8_t * buf, uint16_t len);
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
 /* USER CODE END EXPORTED_FUNCTIONS */
 /**

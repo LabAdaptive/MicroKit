@@ -40,18 +40,17 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
+#include "state.h"
 
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
-extern TIM_HandleTypeDef htim4;
-
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_TIM4_Init(void);
+void MX_TIM4_Init(DeviceConfig *x);
                     
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                 

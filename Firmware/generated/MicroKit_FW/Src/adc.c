@@ -34,62 +34,24 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "adc.h"
-
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
-ADC_HandleTypeDef hadc1;
-ADC_HandleTypeDef hadc2;
-
 /* ADC1 init function */
-void MX_ADC1_Init(void)
+void MX_ADC1_Init(DeviceConfig *x)
 {
-  ADC_ChannelConfTypeDef sConfig;
 
-    /**Common config 
-    */
-  hadc1.Instance = ADC1;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
-  HAL_ADC_Init(&hadc1);
-
-    /**Configure Regular Channel 
-    */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-  HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+  HAL_ADC_ConfigChannel(&(x->hadc1), &(x->sConfig1));
 
 }
 /* ADC2 init function */
-void MX_ADC2_Init(void)
+void MX_ADC2_Init(DeviceConfig *x)
 {
-  ADC_ChannelConfTypeDef sConfig;
 
-    /**Common config 
-    */
-  hadc2.Instance = ADC2;
-  hadc2.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc2.Init.ContinuousConvMode = DISABLE;
-  hadc2.Init.DiscontinuousConvMode = DISABLE;
-  hadc2.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc2.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc2.Init.NbrOfConversion = 1;
-  HAL_ADC_Init(&hadc2);
-
-    /**Configure Regular Channel 
-    */
-  sConfig.Channel = ADC_CHANNEL_11;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-  HAL_ADC_ConfigChannel(&hadc2, &sConfig);
+  HAL_ADC_ConfigChannel(&(x->hadc2), &(x->sConfig2));
 
 }
 

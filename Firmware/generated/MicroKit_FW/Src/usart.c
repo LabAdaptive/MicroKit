@@ -45,18 +45,11 @@ UART_HandleTypeDef huart3;
 
 /* USART3 init function */
 
-void MX_USART3_UART_Init(void)
+void MX_USART3_UART_Init(DeviceConfig *x)
 {
 
-  huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
-  huart3.Init.WordLength = UART_WORDLENGTH_8B;
-  huart3.Init.StopBits = UART_STOPBITS_1;
-  huart3.Init.Parity = UART_PARITY_NONE;
-  huart3.Init.Mode = UART_MODE_TX_RX;
-  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart3);
+
+  HAL_UART_Init(&(x->huart3));
 
 }
 

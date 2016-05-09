@@ -40,18 +40,16 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
-
+#include "state.h"
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-
-extern UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_USART3_UART_Init(void);
+void MX_USART3_UART_Init(DeviceConfig *x);
 
 /* USER CODE BEGIN Prototypes */
 
