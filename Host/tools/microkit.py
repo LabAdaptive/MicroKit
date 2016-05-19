@@ -6,24 +6,27 @@ import sys
 
 
 class MicroKit():
-	def __init__(self):
+	def __init__(self,port):
 		#setup serial port 
 		self.ser = serial.Serial(
 			port=port,
 			timeout=0.1
 		)
     
-    def WriteCommand(self,command=[]):
+	def WriteCommand(self,command=[]):
         
-        ret = [] 
+		ret = [] 
 
-        #write command packet
-        self.ser.write(command)
-        
-        #wait for ack response, 16 bytes long 
-        ret = self.ser.read(16)
+		#write command packet
+		self.ser.write(command)
+		#wait for ack response, 16 bytes long 
+		ret = self.ser.read(16)
+		
+		ret = list(ret)
+		for i in range(16):
+			ret[i] = hex(ord(ret[i]))
 
-        return ret
+		return ret
         
 	
 
@@ -36,9 +39,10 @@ def main(self):
 
     logfile = None 
     args         = vars(parser.parse_args())
-    port         = args['serial']
 
-
+if __name__ == "__MAIN__":
+	mkit = MicroKit('/dev/ttyUSB0')
+	mkit.main()
 
       	
       

@@ -1,7 +1,10 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include "state.h"
+
 #define CMD_ID 0x55
+
 
 #define CMD_CLASS_CFG  0x00
 #define CMD_CLASS_REG  0x01
@@ -25,6 +28,9 @@
 #define I2C_SPEED_100K 0x00
 #define I2C_SPEED_400K 0x01
 
+uint8_t WaitForCommand(DeviceConfig *cfg);
 
+uint8_t ProcessCommand(uint8_t * command, DeviceConfig *cfg);
 
+uint8_t ProcessI2C(uint8_t *command, DeviceConfig *cfg);
 #endif 

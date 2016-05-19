@@ -17,75 +17,61 @@ SPEED_I2C_100K     = 0
                          
 
 class mkit_i2c():
-	def __init__(self):
-	    self.MicroKit = MicroKit()
+	def __init__(self,port):
+		self.MicroKit = MicroKit(port)
 		self.MicroKit_I2C_Config = {'Enabled'            : 0,
                        				'ClockSpeed'         : SPEED_I2C_100K,
-                       				'GeneralCallDisable' : 1,
-                       				'ClockStretching'    : 1}
+                       				'GeneralCallDisable' : 0,
+                       				'ClockStretching'    : 0}
 
-    def GetConfig(self):
+	def GetConfig(self):
 		ret = 0
 		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_READ_CFG] + CMD_I2C_PAD
-        ret = self.MicroKit.WriteCommand(cmd)
+		ret = self.MicroKit.WriteCommand(cmd)
 
-		self.MicroKit_I2C_Config['Enabled']            = ret[4]
+		self.MicroKit_I2C_Config['Enabled']           = ret[4]
 		self.MicroKit_I2C_Config['ClockSpeed']         = ret[5]
 		self.MicroKit_I2C_Config['GeneralCallDisable'] = ret[6]
 		self.MicroKit_I2C_Config['ClockStretching']    = ret[7]
         
+		for items in self.MicroKit_I2C_Config:
+			print items + ": " + str(self.MicroKit_I2C_Config[items])
+
 		return 0 
 
-    def SetConfig(self,enable,speed,generalCall,clockStretch):
-	   	self.MicroKit_I2C_Config['Enabled']            = enable
+	def SetConfig(self,enable,speed,generalCall,clockStretch):
+		self.MicroKit_I2C_Config['Enabled']            = enable
 		self.MicroKit_I2C_Config['ClockSpeed']         = speed
 		self.MicroKit_I2C_Config['GeneralCallDisable'] = generalCall
 		self.MicroKit_I2C_Config['ClockStretching']    = clockStretch
  
 		ret = 0
 		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_WRITE_CFG]
-		cmd = cmd + [self.MicroKit_I2C_Config['Enabled']
-		cmd = cmd + [self.MicroKit_I2C_Config['ClockSpeed']
-		cmd = cmd + [self.MicroKit_I2C_Config['GeneralCallDisable']
-		cmd = cmd + [self.MicroKit_I2C_Config['ClockStretching']
+		cmd = cmd + [self.MicroKit_I2C_Config['Enabled']]
+		cmd = cmd + [self.MicroKit_I2C_Config['ClockSpeed']]
+		cmd = cmd + [self.MicroKit_I2C_Config['GeneralCallDisable']]
+		cmd = cmd + [self.MicroKit_I2C_Config['ClockStretching']]
 
-        ret = self.MicroKit.WriteCommand(cmd)       
+		ret = self.MicroKit.WriteCommand(cmd)       
 
 		return 0
 
-    def MasterRegWrite8(self,slaveAddress,regAddr,data):
-        ret = 0 
+	def MasterRegWrite8(self,slaveAddress,regAddr,data):
+		ret = 0 
 		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_M_WRITE,slaveAddress,regAddr,data]
 		ret = self.MicroKit.WriteCommand(cmd)
 
-        return 0
+		return 0
 
-    def MasterRegRead8(self, slaveAddress,regAddr):
-	   	ret = 0 
+	def MasterRegRead8(self, slaveAddress,regAddr):
+		ret = 0 
 		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_M_READ,slaveAddress,regAddr]
 		ret = self.MicroKit.WriteCommand(cmd)	
         
 		retData = ret[5]
 		return 0
 
-    def ScanI2CBus(self):
-
-        return 0
-
-
-def main(self):
-    #start of main program 
-    #argument parsing 
-    parser = argparse.ArgumentParser(description='Hex Programmer Utility')
-    parser.add_argument('-s','--serial', help='Serial Port Device File', required=True)
-
-
-    logfile = None 
-    args         = vars(parser.parse_args())
-    port         = args['serial']
-
-
-
-      	
-      
+if __name__ == "__main__":
+	i2c=mkit_i2c('/dev/ttyACM0')
+	i2c.GetConfig()     
       

@@ -17,6 +17,8 @@ typedef struct {
     TIM_OC_InitTypeDef TIMConfigOC3;
     TIM_OC_InitTypeDef TIMConfigOC4;
 	UART_HandleTypeDef huart3;
+
+	uint8_t i2c_enabled;
 } DeviceConfig;
 
 static inline void SetBit64(uint64_t *x, uint8_t bitNum);

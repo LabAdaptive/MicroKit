@@ -9,9 +9,12 @@
 #include "state.h"
 #include "tfp_printf.h"
 #include "usbd_cdc_if.h"
+#include "command.h"
 #include "version.h"
+
+
 void SystemClock_Config(void);
-void InitSystem(void);
+void InitSystem(DeviceConfig * devState);
 
 int main(void)
 {
@@ -19,17 +22,13 @@ int main(void)
     uint8_t buffer[512];
     uint16_t length = 0;
     uint8_t ret = 0;
-
-    InitSystem();
+	DeviceConfig devState;
+    InitSystem(&devState);
 
     //HAL_Delay(1000);
     while (1)
     {
-        ret = USB_ReceiveBuffer(buffer, &length);
-        
-        if(length > 0){
-            printf("Bytes Received: %x\n",buffer[0]);
-        }
+        WaitForCommand(&devState);
     }
 
 }
@@ -37,7 +36,7 @@ int main(void)
 /** System Clock Configuration **/
 /** derived from CUBEMx config **/
 
-void InitSystem(){
+void InitSystem(DeviceConfig *devState){
     // init HAL 
     HAL_Init();
    
@@ -45,18 +44,17 @@ void InitSystem(){
     SystemClock_Config();
 
     /* Initialize all configured peripherals */ 
-    DeviceConfig devState;
-    InitDeviceConfig(&devState);  
+    InitDeviceConfig(devState);  
    
     MX_USB_DEVICE_Init();
 
     MX_GPIO_Init();
-    MX_I2C2_Init(&devState);
-    MX_ADC1_Init(&devState);
-    MX_ADC1_Init(&devState);
-    MX_SPI2_Init(&devState);
-    MX_TIM4_Init(&devState);
-    MX_USART3_UART_Init(&devState);
+    MX_I2C2_Init(devState);
+    MX_ADC1_Init(devState);
+    MX_ADC1_Init(devState);
+    MX_SPI2_Init(devState);
+    MX_TIM4_Init(devState);
+    MX_USART3_UART_Init(devState);
     init_printf(NULL,usb_putc);
 }
 

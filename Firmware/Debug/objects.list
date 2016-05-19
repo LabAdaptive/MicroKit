@@ -1,4 +1,5 @@
 "Src/adc.o"
+"Src/command.o"
 "Src/gpio.o"
 "Src/i2c.o"
 "Src/main.o"
