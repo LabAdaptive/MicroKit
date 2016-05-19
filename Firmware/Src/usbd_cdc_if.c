@@ -33,8 +33,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
 
-#define BUF_LIST_LEN 16
-
 /* Handle for USB Full Speed IP */
 USBD_HandleTypeDef  *hUsbDevice_0;
 
@@ -45,11 +43,12 @@ static int8_t CDC_DeInit_FS   (void);
 static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length);
 static int8_t CDC_Receive_FS  (uint8_t* pbuf, uint32_t *Len);
 
-uint8_t ReceiveBuffer[1024];
+uint8_t ReceiveBuffer[512];
 uint8_t TxBuffer[64];
 uint8_t data_received = 0;
 uint16_t read_len = 0;
 
+//USB CDC function pointer struct, passed to IRQ handler during init 
 USBD_CDC_ItfTypeDef USBD_Interface_fops_FS = 
 {
   CDC_Init_FS,
@@ -57,6 +56,7 @@ USBD_CDC_ItfTypeDef USBD_Interface_fops_FS =
   CDC_Control_FS,  
   CDC_Receive_FS
 };
+
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -75,6 +75,7 @@ static int8_t CDC_Init_FS(void)
   return (USBD_OK);
 }
 
+
 /**
   * @brief  CDC_DeInit_FS
   *         DeInitializes the CDC media low layer
@@ -87,6 +88,7 @@ static int8_t CDC_DeInit_FS(void)
   return (USBD_OK);
   /* USER CODE END 4 */ 
 }
+
 
 /**
   * @brief  CDC_Control_FS
@@ -159,8 +161,9 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
   }
 
   return (USBD_OK);
-  /* USER CODE END 5 */
 }
+
+
 
 /**
   * @brief  CDC_Receive_FS
@@ -168,10 +171,9 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
   *         through this function.
   *           
   *         @note
-  *         This function will block any OUT packet reception on USB endpoint 
-  *         untill exiting this function. If you exit this function before transfer
-  *         is complete on CDC interface (ie. using DMA controller) it will result 
-  *         in receiving more data while previous ones are still not sent.
+  *         This fuction is automatically called by the USB IRQ handler when a packet is received
+  *         Currenly this function just sets a global flag signaling data available and stores the 
+  *         size of the received data. 
   *                 
   * @param  Buf: Buffer of data to be received
   * @param  Len: Number of data received (in bytes)
@@ -180,14 +182,29 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
 
 static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 {   
-    
+
     data_received = 1;
     read_len = (*Len);
+    
+    USBD_CDC_ReceivePacket(hUsbDevice_0);   
     return (USBD_OK);
-  /* USER CODE END 6 */ 
+
 }
 
-
+/**
+  * @brief  USB_ReceiveBuffer
+  *         User exposed function to read data over USB CDC Interface  
+  *         
+  *           
+  *         @note
+  *         This function checks the data_received flag, if set it copies the contents of the receive buffer
+  *         to the user buffer and sets the Len field with the number of bytes read. 
+  *          
+  *                 
+  * @param  usr_buf: user provided buffer to place receive contents into
+  * @param  Len: Number of data received (in bytes)
+  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
+  */
 uint8_t USB_ReceiveBuffer(uint8_t* usr_buf, uint8_t *Len){
 	
 	int i = 0 ;
@@ -198,13 +215,16 @@ uint8_t USB_ReceiveBuffer(uint8_t* usr_buf, uint8_t *Len){
             
         (*Len) = read_len;
         data_received = 0;
-        USBD_CDC_ReceivePacket(hUsbDevice_0); 
+        USBD_CDC_ReceivePacket(hUsbDevice_0);   
     }    
     else {
         (*Len) = 0;  
-    }     
-	return 0;
+    }   
+    
+
+	return USBD_OK;
 }
+
 /**
   * @brief  CDC_Transmit_FS
   *         Data send over USB IN endpoint are sent over CDC interface 
@@ -234,27 +254,44 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
   return result;
 }
 
+
+/**
+  * @brief  USB_SendBuffer
+  *         User exposed function to send data over USB CDC interface 
+  *         
+  *         @note
+  *         this data falls through and returns 0 if a length less than 1 is provided
+  *                 
+  * @param  Buf: Buffer of data to be send
+  * @param  Len: Number of data to be send (in bytes)
+  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
+  */
 uint8_t USB_SendBuffer(uint8_t * buf, uint16_t len){
 
     if(len > 0){
         CDC_Transmit_FS(buf,len);
     }
-    return 0;
+    return USBD_OK;
 }
+
+
+/**
+  * @brief  usb_putc
+  *         User exposed function to send a single byte across USB CDC interface.
+  *         This function is implemented to support included printf library 
+  *         
+  *         @note
+  *         only use this with associated printf library 
+  *                 
+  * @param  p: not used (pass NULL) 
+  * @param  c: charecter to write 
+  * 
+  */
 
 void usb_putc (void* p, char c){
     USB_SendBuffer((uint8_t*)&c,1);
 }
-/* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
-/* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-  */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

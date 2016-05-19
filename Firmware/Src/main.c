@@ -9,18 +9,35 @@
 #include "state.h"
 #include "tfp_printf.h"
 #include "usbd_cdc_if.h"
-
+#include "version.h"
 void SystemClock_Config(void);
+void InitSystem(void);
 
 int main(void)
 {
 
-    uint8_t message[1024];
-    uint8_t message2[10] = "hello\n\r";
-	uint8_t recieved_byte = 0;
-	uint8_t recieved_old = 0;
-    uint32_t length = 0;
+    uint8_t buffer[512];
+    uint16_t length = 0;
     uint8_t ret = 0;
+
+    InitSystem();
+
+    //HAL_Delay(1000);
+    while (1)
+    {
+        ret = USB_ReceiveBuffer(buffer, &length);
+        
+        if(length > 0){
+            printf("Bytes Received: %x\n",buffer[0]);
+        }
+    }
+
+}
+
+/** System Clock Configuration **/
+/** derived from CUBEMx config **/
+
+void InitSystem(){
     // init HAL 
     HAL_Init();
    
@@ -41,20 +58,8 @@ int main(void)
     MX_TIM4_Init(&devState);
     MX_USART3_UART_Init(&devState);
     init_printf(NULL,usb_putc);
-    
-    HAL_Delay(2000);
-    while (1)
-    {
-        printf("hello\n\r");
-        HAL_Delay(500);
-        //ret = USB_ReceiveBuffer(message,&length);
-        //USB_SendBuffer(message,length);
-    }
-
 }
 
-/** System Clock Configuration **/
-/** derived from CUBEMx config **/
 void SystemClock_Config(void)
 {
 

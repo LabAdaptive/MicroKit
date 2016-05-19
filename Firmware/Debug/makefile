@@ -31,13 +31,13 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: MicroKitTest.elf
+all: MicroKitFirmware.elf
 
 # Tool invocations
-MicroKitTest.elf: $(OBJS) $(USER_OBJS)
+MicroKitFirmware.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU GCC Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -specs=nosys.specs -specs=nano.specs -T"../STM32F105RCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -lm -o "MicroKitTest.elf" @"objects.list" $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -specs=nosys.specs -specs=nano.specs -T"../STM32F105RCTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -lm -o "MicroKitFirmware.elf" @"objects.list" $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -49,8 +49,8 @@ clean:
 
 post-build:
 	-@echo 'Generating binary and Printing size information:'
-	arm-none-eabi-objcopy -O binary "MicroKitTest.elf" "MicroKitTest.bin"
-	arm-none-eabi-size "MicroKitTest.elf"
+	arm-none-eabi-objcopy -O binary "MicroKitFirmware.elf" "MicroKitFirmware.bin"
+	arm-none-eabi-size "MicroKitFirmware.elf"
 	-@echo ' '
 
 .PHONY: all clean dependents
