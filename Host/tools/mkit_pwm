@@ -20,9 +20,19 @@ class mkit_pwm():
 
 	    return 0 
 
-	def SetConfig(self,enable,speed,generalCall,clockStretch):
-   
+	def SetConfig(self,period,duty,channel):
+            cmd = CMD_POWER_PAD
+            cmd[0] = CD.defines['CMD_ID']
+            cmd[1] = CD.defines['CMD_CLASS_PWM']
+            cmd[2] = 0x00
+            cmd[3] = CD.defines['CMD_CLASS_PWM_WRITE_CFG']
+            cmd[4] = channel 
+            cmd[5] = (period >> 8)
+            cmd[6] = (period & 0x00FF)
+            cmd[7] = (duty >> 8)
+            cmd[8] = (duty & 0x00FF)
 
+            ret = self.MicroKit.WriteCommand(cmd)       
 	    return 0
 
 	def StartPWMChannel(self,channel):
@@ -53,5 +63,16 @@ if __name__ == "__main__":
     MicroKit = MicroKit('/dev/ttyACM0')
 	
     pwm = mkit_pwm(MicroKit) 	
-    pwm.StopPWMChannel(0) 
+    pwm.StartPWMChannel(0) 
+    time.sleep(1)
+    pwm.StopPWMChannel(0)
+    pwm.SetConfig(8399,2000,0)
+    time.sleep(1)
+    pwm.StartPWMChannel(0)
+    time.sleep(1)
+    pwm.StopPWMChannel(0)
+    pwm.SetConfig(8399,100,0)
+    time.sleep(1)
+    pwm.StartPWMChannel(0)
+
               

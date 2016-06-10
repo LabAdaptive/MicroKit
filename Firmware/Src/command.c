@@ -192,12 +192,49 @@ uint8_t ProcessPWM(uint8_t *command, DeviceConfig *cfg){
 	uint8_t ack[16] = {CMD_ID,CMD_CLASS_PWM,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	
         uint32_t channel = 0; 
+        uint16_t period = 0;
+        uint16_t duty = 0;        
         switch(command[3]){
                 case CMD_CLASS_PWM_READ_CFG:
                     break;
-
+                    
                 case CMD_CLASS_PWM_WRITE_CFG:
+                    period = ((command[5] << 8) | (command[6]));                    
+                    duty   = ((command[7] << 8) | (command[8]));
+                    //cfg->htim4.Init.Period = period; 
+                    
+                    //HAL_TIM_PWM_DeInit(&(cfg->htim4));
+                    //HAL_TIM_OC_DeInit(&(cfg->htim4));
+            
+                    //HAL_TIM_PWM_Init(&(cfg->htim4));
+                    //HAL_TIM_OC_Init(&(cfg->htim4));
+                    //HAL_TIMEx_MasterConfigSynchronization(&(cfg->htim4),&(cfg->sTIMMasterConfig));
+               
+                    if(command[4] == 0x00){
+                        cfg->TIMConfigOC1.Pulse = 1000;
+                        HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC1),TIM_CHANNEL_1);
+                    }
+                    else if(command[4] == 0x01){
+                        cfg->TIMConfigOC2.Pulse = duty;
+                        //HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC2),TIM_CHANNEL_2);
+                    }
+                    else if(command[4] == 0x02){
+                        cfg->TIMConfigOC3.Pulse = duty;
+                        //HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC3),TIM_CHANNEL_3);
+                    }
+                    else if(command[4] == 0x03){
+                        cfg->TIMConfigOC4.Pulse = duty;
+                        //HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC4),TIM_CHANNEL_4);
+                    }
+                    else{
+                        return -1;
+                    } 
 
+
+                    //HAL_TIM_MspPostInit(&(cfg->htim4));
+
+                    ack[3] = CMD_CLASS_PWM_WRITE_CFG;
+                    USB_SendBuffer(ack,16);
                     break;
 
 		case CMD_CLASS_PWM_START:
