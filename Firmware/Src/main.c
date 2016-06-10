@@ -22,9 +22,9 @@ int main(void)
     uint8_t buffer[512];
     uint16_t length = 0;
     uint8_t ret = 0;
-	DeviceConfig devState;
+    DeviceConfig devState;
     InitSystem(&devState);
-
+    
     //HAL_Delay(1000);
     while (1)
     {

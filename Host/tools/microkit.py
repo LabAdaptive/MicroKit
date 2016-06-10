@@ -10,7 +10,7 @@ class MicroKit():
 		#setup serial port 
 		self.ser = serial.Serial(
 			port=port,
-			timeout=0.1
+			timeout=10
 		)
     
 	def WriteCommand(self,command=[]):

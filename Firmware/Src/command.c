@@ -4,6 +4,8 @@
 #include "state.h"
 #include "usb_device.h"
 
+#include "../../Common/MKitCommands.h"
+
 uint8_t WaitForCommand(DeviceConfig *cfg){
 
 	uint8_t ret = 0;
@@ -64,7 +66,7 @@ uint8_t ProcessCommand(uint8_t * command, DeviceConfig *cfg){
 
 
 		case CMD_CLASS_I2C:
-			ProcessI2C(command,cfg);
+		        ProcessI2C(command,cfg);
 			break;
 
 		case CMD_CLASS_JTAG:
@@ -73,7 +75,8 @@ uint8_t ProcessCommand(uint8_t * command, DeviceConfig *cfg){
 			break;
 
 
-		case CMD_CLASS_PWR:
+		case CMD_CLASS_PWM:
+                        ProcessPWM(command,cfg);
 
 			break;
 
@@ -87,7 +90,7 @@ uint8_t ProcessCommand(uint8_t * command, DeviceConfig *cfg){
 }
 
 uint8_t ProcessI2C(uint8_t *command, DeviceConfig *cfg){
-
+	HAL_StatusTypeDef ret = HAL_OK;
 	uint8_t ack[16] = {CMD_ID,CMD_CLASS_I2C,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	switch(command[3]){
 		case CMD_CLASS_I2C_READ_CFG:
@@ -110,18 +113,143 @@ uint8_t ProcessI2C(uint8_t *command, DeviceConfig *cfg){
 			break;
 
 		case CMD_CLASS_I2C_WRITE_CFG:
+			//DeInit I2C Controller 
+			HAL_I2C_MspDeInit(&cfg->hi2c2);
 
+			if(command[5] == 0x00)
+				cfg->hi2c2.Init.ClockSpeed  = 100000;
+	
+			else if(command[5] = 0x01)
+				cfg->hi2c2.Init.ClockSpeed = 400000;
+
+			else
+				cfg->hi2c2.Init.ClockSpeed = 100000;
+			
+			cfg->hi2c2.Init.GeneralCallMode = command[6];
+			cfg->hi2c2.Init.NoStretchMode   = command[7];
+		
+			//ReInit with new config options 
+			HAL_I2C_MspInit(&cfg->hi2c2);
+
+			ack[3] = CMD_CLASS_I2C_WRITE_CFG;
+			ack[4] = 0x00;
+	
+			//send ack response 
+			USB_SendBuffer(ack,16);
 			break;
 
 		case CMD_CLASS_I2C_M_READ:
+			ack[3] = CMD_CLASS_I2C_M_READ;
 
+			ack[5] = 0xff;
+			ack[6] = 0xff;
+
+			//write reg offset
+			ret = HAL_I2C_Master_Transmit(&cfg->hi2c2,(uint16_t)command[4],&command[5],1,3000);
+		
+			ack[5] = ret;
+		
+			//if first write completed successfully 
+			if (ack[5] == 0x00){
+				//write data 
+				ret = HAL_I2C_Master_Receive(&cfg->hi2c2,(uint16_t)command[4],&ack[4],1,3000);
+				ack[6] = 0x01;	
+					
+			}
+			
+			USB_SendBuffer(ack,16);
 			break;
 
 		case CMD_CLASS_I2C_M_WRITE:
+			ack[3] = CMD_CLASS_I2C_M_WRITE;
 
+			ack[5] = 0xff;
+			ack[6] = 0xff;
+
+			//write reg offset
+			ret = HAL_I2C_Master_Transmit(&cfg->hi2c2,(uint16_t)command[4],&command[5],1,3000);
+			ack[5] = ret;
+					
+			
+			//if first write completed successfully 
+			if (ack[5] == 0x00){
+				//write data 
+				ret = HAL_I2C_Master_Transmit(&cfg->hi2c2,(uint16_t)command[4],&command[6],1,3000);
+					
+				ack[6] = ret;
+				}
+			
+			USB_SendBuffer(ack,16);
 			break;
 
 	}
 
 	return 0;
 }
+
+uint8_t ProcessPWM(uint8_t *command, DeviceConfig *cfg){
+	HAL_StatusTypeDef ret = HAL_OK;
+	uint8_t ack[16] = {CMD_ID,CMD_CLASS_PWM,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	
+        uint32_t channel = 0; 
+        switch(command[3]){
+                case CMD_CLASS_PWM_READ_CFG:
+                    break;
+
+                case CMD_CLASS_PWM_WRITE_CFG:
+
+                    break;
+
+		case CMD_CLASS_PWM_START:
+                    if(command[4] == 0x00){
+                        channel = TIM_CHANNEL_1;
+                    }
+                    else if(command[4] == 0x01){
+                        channel = TIM_CHANNEL_2;
+
+                    }
+                    else if(command[4] == 0x02){
+                        channel = TIM_CHANNEL_3;
+                    }
+                    else if(command[4] == 0x03){
+                        channel = TIM_CHANNEL_4;
+                    }
+                    else{
+                        return -1;
+                    }
+                    
+
+                    HAL_TIM_PWM_Start(&(cfg->htim4),channel);
+                    ack[3] = CMD_CLASS_PWM_READ_CFG;
+                    USB_SendBuffer(ack,16);            
+                    break;
+
+                case CMD_CLASS_PWM_STOP:
+                    if(command[4] == 0x00){
+                        channel = TIM_CHANNEL_1;
+                    }
+                    else if(command[4] == 0x01){
+                        channel = TIM_CHANNEL_2;
+
+                    }
+                    else if(command[4] == 0x02){
+                        channel = TIM_CHANNEL_3;
+                    }
+                    else if(command[4] == 0x03){
+                        channel = TIM_CHANNEL_4;
+                    }
+                    else{
+                        return -1;
+                    }
+                    
+
+                    HAL_TIM_PWM_Stop(&(cfg->htim4),channel);
+                    ack[3] = CMD_CLASS_PWM_STOP;
+                    USB_SendBuffer(ack,16);
+
+                    break;
+        }
+    return 0;
+    
+}
+

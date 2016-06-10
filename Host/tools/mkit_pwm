@@ -1,0 +1,57 @@
+#!/usr/bin/python
+import argparse 
+import time 
+import serial 
+import sys
+from microkit import MicroKit 
+from cdefine import CDefine 
+
+CD = CDefine()
+CD.Load('../../Common/MKitCommands.h')
+
+CMD_POWER_PAD        = [0x00]*16    
+                         
+
+class mkit_pwm():
+	def __init__(self,mkit):
+	    self.MicroKit = mkit
+
+	def GetConfig(self):
+
+	    return 0 
+
+	def SetConfig(self,enable,speed,generalCall,clockStretch):
+   
+
+	    return 0
+
+	def StartPWMChannel(self,channel):
+            cmd = CMD_POWER_PAD
+            cmd[0] = CD.defines['CMD_ID']
+            cmd[1] = CD.defines['CMD_CLASS_PWM']
+            cmd[2] = 0x00
+            cmd[3] = CD.defines['CMD_CLASS_PWM_START']
+            cmd[4] = channel 
+
+            ret = self.MicroKit.WriteCommand(cmd)       
+
+	    return 0
+
+	def StopPWMChannel(self, channel):
+            cmd = CMD_POWER_PAD
+            cmd[0] = CD.defines['CMD_ID']
+            cmd[1] = CD.defines['CMD_CLASS_PWM']
+            cmd[2] = 0x00
+            cmd[3] = CD.defines['CMD_CLASS_PWM_STOP']
+            cmd[4] = channel 
+
+            ret = self.MicroKit.WriteCommand(cmd)       
+
+	    return 0
+
+if __name__ == "__main__":
+    MicroKit = MicroKit('/dev/ttyACM0')
+	
+    pwm = mkit_pwm(MicroKit) 	
+    pwm.StopPWMChannel(0) 
+              

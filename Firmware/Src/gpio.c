@@ -70,7 +70,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, BOOST_EN_Pin|TCK_SWCLK_Pin|SCK_SS_O_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(TMS_SDIO_GPIO_Port, TMS_SDIO_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(TMS_SDIO_GPIO_Port, TMS_SDIO_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(TX_MOSI_O_GPIO_Port, TX_MOSI_O_Pin, GPIO_PIN_RESET);

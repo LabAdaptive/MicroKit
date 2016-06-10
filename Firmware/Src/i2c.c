@@ -41,13 +41,13 @@
 
 /* USER CODE END 0 */
 
-I2C_HandleTypeDef hi2c2;
+//I2C_HandleTypeDef hi2c2;
 
 /* I2C2 init function */
-void MX_I2C2_Init(DeviceConfig * x)
+void MX_I2C2_Init(DeviceConfig *x)
 {
-
-  HAL_I2C_Init(&(x->hi2c2));
+	HAL_StatusTypeDef ret = 0;
+	ret = HAL_I2C_Init(&(x->hi2c2));
 
 }
 
@@ -57,6 +57,9 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
   GPIO_InitTypeDef GPIO_InitStruct;
   if(hi2c->Instance==I2C2)
   {
+  	HAL_GPIO_WritePin(TMS_SDIO_GPIO_Port, TMS_SDIO_Pin, GPIO_PIN_SET);
+
+	
   /* USER CODE BEGIN I2C2_MspInit 0 */
 
   /* USER CODE END I2C2_MspInit 0 */

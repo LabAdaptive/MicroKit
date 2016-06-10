@@ -41,13 +41,14 @@ uint8_t InitDeviceConfig(DeviceConfig * x){
 
   //I2C state config
   x->hi2c2.Instance = I2C2;
+  x->hi2c2.State    = HAL_I2C_STATE_RESET;
   x->hi2c2.Init.ClockSpeed = 400000;
   x->hi2c2.Init.DutyCycle = I2C_DUTYCYCLE_2;
   x->hi2c2.Init.OwnAddress1 = 0;
   x->hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   x->hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
   x->hi2c2.Init.OwnAddress2 = 0;
-  x->hi2c2.Init.GeneralCallMode = I2C_GENERALCALL_ENABLE;
+  x->hi2c2.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
   x->hi2c2.Init.NoStretchMode = I2C_NOSTRETCH_ENABLE;
  
   x->i2c_enabled = 1;
@@ -68,16 +69,17 @@ uint8_t InitDeviceConfig(DeviceConfig * x){
 
   //PWM/Timer config 
   x->htim4.Instance = TIM4;
+  x->htim4.State = HAL_TIM_STATE_RESET;
   x->htim4.Init.Prescaler = 0;
   x->htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  x->htim4.Init.Period = 0;
+  x->htim4.Init.Period = 8399;
   x->htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 
   x->sTIMMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   x->sTIMMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 
   x->TIMConfigOC1.OCMode = TIM_OCMODE_PWM1;
-  x->TIMConfigOC1.Pulse = 0;
+  x->TIMConfigOC1.Pulse = 8399;
   x->TIMConfigOC1.OCPolarity = TIM_OCPOLARITY_HIGH;
   x->TIMConfigOC1.OCFastMode = TIM_OCFAST_DISABLE;    
 

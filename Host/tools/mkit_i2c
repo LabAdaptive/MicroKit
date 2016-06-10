@@ -4,29 +4,25 @@ import time
 import serial 
 import sys
 from microkit import MicroKit 
+from cdefine import CDefine 
 
-CMD_ID             = 0x55
-CMD_CLASS_I2C      = 0x07
-CMD_I2C_READ_CFG   = 0x00
-CMD_I2C_WRITE_CFG  = 0x01 
-CMD_I2C_M_READ     = 0x02
-CMD_I2C_M_WRITE    = 0x03
+CD = CDefine()
+CD.Load('../../Common/MKitCommands.h')
+
 CMD_I2C_PAD        = [0x00]*12    
-
-SPEED_I2C_100K     = 0 
                          
 
 class mkit_i2c():
-	def __init__(self,port):
-		self.MicroKit = MicroKit(port)
+	def __init__(self,mkit):
+		self.MicroKit = mkit
+
 		self.MicroKit_I2C_Config = {'Enabled'            : 0,
-                       				'ClockSpeed'         : SPEED_I2C_100K,
+                       				'ClockSpeed'         : CD.defines['I2C_SPEED_100K'],
                        				'GeneralCallDisable' : 0,
                        				'ClockStretching'    : 0}
-
 	def GetConfig(self):
 		ret = 0
-		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_READ_CFG] + CMD_I2C_PAD
+		cmd = [CD.defines['CMD_ID'],CD.defines['CMD_CLASS_I2C'],0x00,CD.defines['CMD_CLASS_I2C_READ_CFG']] + CMD_I2C_PAD
 		ret = self.MicroKit.WriteCommand(cmd)
 
 		self.MicroKit_I2C_Config['Enabled']           = ret[4]
@@ -46,7 +42,7 @@ class mkit_i2c():
 		self.MicroKit_I2C_Config['ClockStretching']    = clockStretch
  
 		ret = 0
-		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_WRITE_CFG]
+		cmd = [CD.defines['CMD_ID'],CD.defines['CMD_CLASS_I2C'],0x00,CD.defines['CMD_CLASS_I2C_WRITE_CFG']] + [0x00]*12
 		cmd = cmd + [self.MicroKit_I2C_Config['Enabled']]
 		cmd = cmd + [self.MicroKit_I2C_Config['ClockSpeed']]
 		cmd = cmd + [self.MicroKit_I2C_Config['GeneralCallDisable']]
@@ -58,20 +54,25 @@ class mkit_i2c():
 
 	def MasterRegWrite8(self,slaveAddress,regAddr,data):
 		ret = 0 
-		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_M_WRITE,slaveAddress,regAddr,data]
+		cmd = [CD.defines['CMD_ID'],CD.defines['CMD_CLASS_I2C'],0x00,CD.defines['CMD_CLASS_I2C_M_WRITE'],slaveAddress,regAddr,data] + [0x00]*9
 		ret = self.MicroKit.WriteCommand(cmd)
-
+		
+		print ret
 		return 0
 
 	def MasterRegRead8(self, slaveAddress,regAddr):
 		ret = 0 
-		cmd = [CMD_ID,CMD_CLASS_I2C,0x00,CMD_I2C_M_READ,slaveAddress,regAddr]
+		cmd = [CD.defines['CMD_ID'],CD.defines['CMD_CLASS_I2C'],0x00,CD.defines['CMD_CLASS_I2C_M_READ'],slaveAddress,regAddr] + [0x00] *10
 		ret = self.MicroKit.WriteCommand(cmd)	
         
 		retData = ret[5]
 		return 0
 
 if __name__ == "__main__":
-	i2c=mkit_i2c('/dev/ttyACM0')
-	i2c.GetConfig()     
+	MicroKit = MicroKit('/dev/ttyACM0')
+	
+	i2c = mkit_i2c(MicroKit) 	
+
+	i2c.GetConfig()
+	#i2c.MasterRegWrite8(0x55,0xAA,0xFF);     
       
