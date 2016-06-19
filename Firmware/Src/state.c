@@ -72,14 +72,14 @@ uint8_t InitDeviceConfig(DeviceConfig * x){
   x->htim4.State = HAL_TIM_STATE_RESET;
   x->htim4.Init.Prescaler = 0;
   x->htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  x->htim4.Init.Period = 8399;
+  x->htim4.Init.Period = 839;
   x->htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 
   x->sTIMMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   x->sTIMMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 
   x->TIMConfigOC1.OCMode = TIM_OCMODE_PWM1;
-  x->TIMConfigOC1.Pulse = 8399;
+  x->TIMConfigOC1.Pulse = 839;
   x->TIMConfigOC1.OCPolarity = TIM_OCPOLARITY_HIGH;
   x->TIMConfigOC1.OCFastMode = TIM_OCFAST_DISABLE;    
 

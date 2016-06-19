@@ -201,17 +201,17 @@ uint8_t ProcessPWM(uint8_t *command, DeviceConfig *cfg){
                 case CMD_CLASS_PWM_WRITE_CFG:
                     period = ((command[5] << 8) | (command[6]));                    
                     duty   = ((command[7] << 8) | (command[8]));
-                    //cfg->htim4.Init.Period = period; 
+                    cfg->TIMConfigOC1.Pulse = duty;
+                    cfg->htim4.Init.Period  = period; 
                     
-                    //HAL_TIM_PWM_DeInit(&(cfg->htim4));
-                    //HAL_TIM_OC_DeInit(&(cfg->htim4));
-            
-                    //HAL_TIM_PWM_Init(&(cfg->htim4));
-                    //HAL_TIM_OC_Init(&(cfg->htim4));
-                    //HAL_TIMEx_MasterConfigSynchronization(&(cfg->htim4),&(cfg->sTIMMasterConfig));
+                    HAL_TIM_OC_DeInit(&(cfg->htim4));
+                    HAL_TIM_PWM_DeInit(&(cfg->htim4));
+                    
+                    HAL_TIM_PWM_Init(&(cfg->htim4));
+                    HAL_TIM_OC_Init(&(cfg->htim4));
+                    HAL_TIMEx_MasterConfigSynchronization(&(cfg->htim4),&(cfg->sTIMMasterConfig));
                
                     if(command[4] == 0x00){
-                        cfg->TIMConfigOC1.Pulse = 1000;
                         HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC1),TIM_CHANNEL_1);
                     }
                     else if(command[4] == 0x01){
