@@ -3,6 +3,7 @@
 #include "usbd_cdc_if.h"
 #include "state.h"
 #include "usb_device.h"
+#include "gpio.h"
 
 #include "../../Common/MKitCommands.h"
 
@@ -69,8 +70,8 @@ uint8_t ProcessCommand(uint8_t * command, DeviceConfig *cfg){
 		        ProcessI2C(command,cfg);
 			break;
 
-		case CMD_CLASS_JTAG:
-
+		case CMD_CLASS_PWR:
+                        ProcessPWR(command,cfg);
 
 			break;
 
@@ -201,7 +202,7 @@ uint8_t ProcessPWM(uint8_t *command, DeviceConfig *cfg){
                 case CMD_CLASS_PWM_WRITE_CFG:
                     period = ((command[5] << 8) | (command[6]));                    
                     duty   = ((command[7] << 8) | (command[8]));
-                    cfg->TIMConfigOC1.Pulse = duty;
+
                     cfg->htim4.Init.Period  = period; 
                     
                     HAL_TIM_OC_DeInit(&(cfg->htim4));
@@ -212,25 +213,29 @@ uint8_t ProcessPWM(uint8_t *command, DeviceConfig *cfg){
                     HAL_TIMEx_MasterConfigSynchronization(&(cfg->htim4),&(cfg->sTIMMasterConfig));
                
                     if(command[4] == 0x00){
+                        cfg->TIMConfigOC1.Pulse = duty;
                         HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC1),TIM_CHANNEL_1);
+                        HAL_TIM_PWM_Start(&(cfg->htim4),TIM_CHANNEL_1);
                     }
                     else if(command[4] == 0x01){
                         cfg->TIMConfigOC2.Pulse = duty;
-                        //HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC2),TIM_CHANNEL_2);
+                        HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC2),TIM_CHANNEL_2);                         HAL_TIM_PWM_Start(&(cfg->htim4),TIM_CHANNEL_2);
                     }
                     else if(command[4] == 0x02){
                         cfg->TIMConfigOC3.Pulse = duty;
-                        //HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC3),TIM_CHANNEL_3);
+                        HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC3),TIM_CHANNEL_3);
+                        HAL_TIM_PWM_Start(&(cfg->htim4),TIM_CHANNEL_3);
                     }
                     else if(command[4] == 0x03){
                         cfg->TIMConfigOC4.Pulse = duty;
-                        //HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC4),TIM_CHANNEL_4);
+                        HAL_TIM_PWM_ConfigChannel(&(cfg->htim4),&(cfg->TIMConfigOC4),TIM_CHANNEL_4);
+                        HAL_TIM_PWM_Start(&(cfg->htim4),TIM_CHANNEL_4);
                     }
                     else{
                         return -1;
                     } 
 
-
+                    
                     //HAL_TIM_MspPostInit(&(cfg->htim4));
 
                     ack[3] = CMD_CLASS_PWM_WRITE_CFG;
@@ -290,3 +295,85 @@ uint8_t ProcessPWM(uint8_t *command, DeviceConfig *cfg){
     
 }
 
+uint8_t ProcessPWR(uint8_t *command, DeviceConfig *cfg){
+	HAL_StatusTypeDef ret = HAL_OK;
+	uint8_t ack[16] = {CMD_ID,CMD_CLASS_PWM,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	    
+        uint8_t error = 0;
+        uint8_t supply = 0; 
+        switch(command[3]){
+                case CMD_CLASS_PWR_STAT:
+                    ack[4] = cfg->VA0_EN;
+                    ack[5] = (0xFF & cfg->TIMConfigOC4.Pulse >> 8);
+                    ack[6] = (0xFF & cfg->TIMConfigOC4.Pulse);
+
+                    ack[7] = cfg->VA1_EN;
+                    ack[8] = (0xFF & cfg->TIMConfigOC3.Pulse >> 8);
+                    ack[9] = (0xFF & cfg->TIMConfigOC3.Pulse);
+
+                    ack[10] = cfg->BOOST_EN;
+                    ack[11] = cfg->BOOST_SEL;
+ 
+                    ack[3] = CMD_CLASS_PWR_ON;;
+                    USB_SendBuffer(ack,16);   
+                    break;
+                    
+                case CMD_CLASS_PWR_ON:
+                    supply = command[4];
+                    if(supply == 0x00){
+                        cfg->VA0_EN = 1;
+                        HAL_GPIO_WritePin(GPIOC, VA0_EN_Pin,GPIO_PIN_SET);
+                    }
+                    else if (supply == 0x01){       
+                        cfg->VA1_EN = 1;
+                        HAL_GPIO_WritePin(GPIOC, VA1_EN_Pin,GPIO_PIN_SET);
+                    }
+                    else if (supply == 0x02){
+                        cfg->BOOST_EN = 1;
+                        HAL_GPIO_WritePin(GPIOA,BOOST_EN_Pin,GPIO_PIN_SET);
+                    }
+                    else if (supply == 0x03){
+                        cfg->BOOST_SEL = 1;
+                        HAL_GPIO_WritePin(BOOST_SEL_GPIO_Port,BOOST_SEL_Pin,GPIO_PIN_SET);
+                    }
+                    else{
+                        error = -1;
+                    }
+
+                    ack[3] = CMD_CLASS_PWR_ON;
+                    ack[4] = error;
+                    USB_SendBuffer(ack,16);
+                    break;
+
+		case CMD_CLASS_PWR_OFF:
+                    supply = command[4];
+                    if(supply == 0x00){
+                        cfg->VA0_EN = 0;
+                        HAL_GPIO_WritePin(GPIOC, VA0_EN_Pin, GPIO_PIN_RESET);
+                    }
+                    else if (supply == 0x01){       
+                        cfg->VA1_EN = 0;
+                        HAL_GPIO_WritePin(GPIOC, VA1_EN_Pin, GPIO_PIN_RESET);
+                    }
+                    else if (supply == 0x02){
+                        cfg->BOOST_EN = 0;
+                        HAL_GPIO_WritePin(GPIOA,BOOST_EN_Pin,GPIO_PIN_RESET);
+                    }
+                    else if (supply == 0x03){
+                        cfg->BOOST_SEL = 0;
+                        HAL_GPIO_WritePin(BOOST_SEL_GPIO_Port,BOOST_SEL_Pin,GPIO_PIN_RESET);
+                    }
+                    else{
+                        error = -1;
+                    }
+    
+                    ack[3] = CMD_CLASS_PWR_OFF;
+                    ack[4] = error;
+
+                    USB_SendBuffer(ack,16);     
+                    break;
+
+        }
+    return 0;
+    
+}

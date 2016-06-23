@@ -9,4 +9,5 @@ uint8_t ProcessCommand(uint8_t * command, DeviceConfig *cfg);
 
 uint8_t ProcessI2C(uint8_t *command, DeviceConfig *cfg);
 uint8_t ProcessPWM(uint8_t *command, DeviceConfig *cfg);
+uint8_t ProcessPWR(uint8_t *command, DeviceConfig *cfg);
 #endif 

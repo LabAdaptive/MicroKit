@@ -1,5 +1,5 @@
 #include "state.h"
-
+#include "gpio.h"
 
 static inline void SetBit64(uint64_t *x, uint8_t bitNum) {
     *x |= (1L << bitNum);
@@ -108,6 +108,12 @@ uint8_t InitDeviceConfig(DeviceConfig * x){
   x->huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   x->huart3.Init.OverSampling = UART_OVERSAMPLING_16;
 
+  //gpio/pwr control 
+
+  x->VA0_EN        = 0;
+  x->VA1_EN        = 0;
+  x->BOOST_EN      = 0;
+  x->BOOST_SEL     = 0;
 }
 
 

@@ -34,4 +34,11 @@
 #define CMD_CLASS_PWM_DISABLE_PWM   0x03
 #define CMD_CLASS_PWM_START         0x04
 #define CMD_CLASS_PWM_STOP          0x05
+
+//PWR Command Defines 
+#define CMD_CLASS_PWR_STAT 0x00
+#define CMD_CLASS_PWR_ON   0x01
+#define CMD_CLASS_PWR_OFF  0x02
+#define CMD_CLASS_PWR_TRIM 0x03
+
 #endif 
